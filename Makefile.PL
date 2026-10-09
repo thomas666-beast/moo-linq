@@ -79,6 +79,8 @@ WriteMakefile(
             'Moo::LINQ::Source::CSV'  => { file => 'lib/Moo/LINQ/Source/CSV.pm',   version => '0.01' },
             'Moo::LINQ::Source::TSV'  => { file => 'lib/Moo/LINQ/Source/TSV.pm',   version => '0.01' },
             'Moo::LINQ::Source::Lines'=> { file => 'lib/Moo/LINQ/Source/Lines.pm', version => '0.01' },
+            'Moo::LINQ::Source::LTSV' => { file => 'lib/Moo/LINQ/Source/LTSV.pm', version => '0.01' },
+            'Moo::LINQ::Source::JSON' => { file => 'lib/Moo/LINQ/Source/JSON.pm', version => '0.01' },
         },
 
         resources => {

@@ -213,6 +213,8 @@ C<$type> is C<'auto'> (default), C<'numeric'>, or C<'string'>.
     Moo::LINQ->FromLines($path, %opts)
     Moo::LINQ->FromCSV($path, %opts)
     Moo::LINQ->FromTSV($path, %opts)
+    Moo::LINQ->FromLTSV($path, %opts)
+    Moo::LINQ->FromJSON($path, %opts)
 
 =head1 LAZINESS
 
