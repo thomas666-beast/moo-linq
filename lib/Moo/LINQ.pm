@@ -14,7 +14,8 @@ with 'Moo::LINQ::Filtering',
      'Moo::LINQ::Sets',
      'Moo::LINQ::Quantifiers',
      'Moo::LINQ::Conversion',
-     'Moo::LINQ::Advanced';
+     'Moo::LINQ::Advanced',
+     'Moo::LINQ::Source';
 
 our $VERSION = '0.11';
 
@@ -201,6 +202,17 @@ C<$type> is C<'auto'> (default), C<'numeric'>, or C<'string'>.
     ->OrderByCmp($cmp_fn)           ->Repeat($n)
     ->Buffer($size)                 ->WhereIndexed($pred)
     ->SelectIndexed($fn)
+
+=head2 Sources
+
+    Moo::LINQ->From($arrayref | $coderef | $glob | $hashref | $iterable)
+    Moo::LINQ->Range($start, $end, $step = 1)
+    Moo::LINQ->Empty()
+
+    # File sources (Moo::LINQ::Source role)
+    Moo::LINQ->FromLines($path, %opts)
+    Moo::LINQ->FromCSV($path, %opts)
+    Moo::LINQ->FromTSV($path, %opts)
 
 =head1 LAZINESS
 

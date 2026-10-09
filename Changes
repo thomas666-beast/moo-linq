@@ -1,4 +1,9 @@
 Revision history for Moo::LINQ
+{{$NEXT}}
+        - Added Moo::LINQ::Source role with FromLines, FromCSV, FromTSV
+        - Streaming CSV/TSV readers with header detection, custom
+          delimiters, and RFC-4180-style quoted-field support
+        - Added t/12-source-text.t
 
 0.11    2026-10-09
         - Added Moo::LINQ::Advanced role:

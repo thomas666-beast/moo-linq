@@ -19,6 +19,7 @@ WriteMakefile(
 
     TEST_REQUIRES => {
         'Test::More' => '1.300',
+        'File::Temp' => '0.22',
     },
 
     META_MERGE => {
@@ -73,6 +74,11 @@ WriteMakefile(
                 file    => 'lib/Moo/LINQ/Advanced.pm',
                 version => '0.01',
             },
+
+            'Moo::LINQ::Source'       => { file => 'lib/Moo/LINQ/Source.pm',       version => '0.01' },
+            'Moo::LINQ::Source::CSV'  => { file => 'lib/Moo/LINQ/Source/CSV.pm',   version => '0.01' },
+            'Moo::LINQ::Source::TSV'  => { file => 'lib/Moo/LINQ/Source/TSV.pm',   version => '0.01' },
+            'Moo::LINQ::Source::Lines'=> { file => 'lib/Moo/LINQ/Source/Lines.pm', version => '0.01' },
         },
 
         resources => {
