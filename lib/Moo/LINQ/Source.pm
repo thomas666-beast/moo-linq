@@ -77,15 +77,15 @@ Adds file-reading constructors to L<Moo::LINQ>:
 
 =over 4
 
-=item * C<FromLines> — line-by-line text (streaming)
+=item * C<FromLines> -- line-by-line text (streaming)
 
-=item * C<FromCSV> — CSV with optional header (streaming)
+=item * C<FromCSV> -- CSV with optional header (streaming)
 
-=item * C<FromTSV> — tab-separated (streaming)
+=item * C<FromTSV> -- tab-separated (streaming)
 
-=item * C<FromLTSV> — labeled TSV as hashrefs (streaming)
+=item * C<FromLTSV> -- labeled TSV as hashrefs (streaming)
 
-=item * C<FromJSON> — top-level JSON array (buffered)
+=item * C<FromJSON> -- top-level JSON array (buffered)
 
 =back
 

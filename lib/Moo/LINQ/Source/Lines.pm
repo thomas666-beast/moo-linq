@@ -35,3 +35,21 @@ sub iterator {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Source::Lines - Line-by-line file source for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Streams a text file one line at a time. Used indirectly through
+C<Moo::LINQ->FromLines>. Options: C<chomp> (default 1),
+C<skip_blank> (default 1).
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>, L<Moo::LINQ::Source>
+
+=cut

@@ -112,3 +112,21 @@ sub iterator {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Source::CSV - CSV file source for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Streaming CSV reader. Used indirectly through C<Moo::LINQ->FromCSV>.
+Supports custom delimiters, optional header row, and RFC-4180-style
+quoted fields.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>, L<Moo::LINQ::Source>
+
+=cut

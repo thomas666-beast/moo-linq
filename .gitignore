@@ -9,6 +9,7 @@ cpanfile.snapshot.bak
 # ---------------------------------------------------------------------------
 # Perl build artifacts (from Makefile.PL / Build.PL / Dist::Zilla)
 # ---------------------------------------------------------------------------
+.build
 /blib/
 /_build/
 /Build
@@ -122,3 +123,9 @@ $RECYCLE.BIN/
 # ---------------------------------------------------------------------------
 *.log
 /logs/
+
+# Explicitly keep these generated files in git for Carton users
+!Makefile.PL
+!META.json
+
+/.build/

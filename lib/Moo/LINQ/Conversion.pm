@@ -67,3 +67,20 @@ sub Print {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Conversion - Conversion operators for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Provides C<ToHash>, C<ToJson>, C<ToString>, C<ForEach>, and C<Print>.
+Loaded automatically by L<Moo::LINQ>.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>
+
+=cut

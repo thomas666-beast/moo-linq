@@ -16,3 +16,20 @@ sub AsQuery {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Group - Group result object for Moo::LINQ::GroupBy
+
+=head1 DESCRIPTION
+
+Represents one group produced by C<GroupBy>. Provides C<key>, C<items>,
+C<Count>, C<ToArray>, C<ToList>, and C<AsQuery>.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>, L<Moo::LINQ::Grouping>
+
+=cut

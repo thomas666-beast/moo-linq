@@ -122,3 +122,19 @@ sub Zip {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Joining - Joining operators for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Provides C<Join>, C<GroupJoin>, and C<Zip>. Loaded automatically by L<Moo::LINQ>.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>
+
+=cut

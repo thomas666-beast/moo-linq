@@ -173,3 +173,21 @@ sub DefaultIfEmpty {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Quantifiers - Quantifier operators for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Provides C<Contains>, C<SequenceEqual>, C<ElementAt>, C<ElementAtOrDefault>,
+C<Single>, C<SingleOrDefault>, C<Last>, C<LastOrDefault>, and
+C<DefaultIfEmpty>. Loaded automatically by L<Moo::LINQ>.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>
+
+=cut

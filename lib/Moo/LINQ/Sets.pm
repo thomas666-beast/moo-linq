@@ -86,3 +86,20 @@ sub Except {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Sets - Set operators for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Provides C<Concat>, C<Union>, C<Intersect>, and C<Except>.
+Loaded automatically by L<Moo::LINQ>.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>
+
+=cut

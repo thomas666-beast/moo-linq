@@ -66,7 +66,7 @@ required.
 
 =head1 NOTES
 
-The whole file is decoded up front — JSON is not a streaming format by
+The whole file is decoded up front -- JSON is not a streaming format by
 default. For very large JSON files, pre-process them with C<jq> or a
 streaming parser into LTSV, CSV, or JSON-lines format, then feed them
 through L<Moo::LINQ::Source::LTSV>, L<Moo::LINQ::Source::CSV>, or

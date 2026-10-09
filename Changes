@@ -1,20 +1,36 @@
-Revision history for Moo::LINQ
+Revision history for Moo-LINQ
+
 {{$NEXT}}
-        - Added Moo::LINQ::Source role with FromLines, FromCSV, FromTSV
-        - Streaming CSV/TSV readers with header detection, custom
-          delimiters, and RFC-4180-style quoted-field support
-        - Added t/12-source-text.t
+
+0.12    2026-10-09
+        - Added Moo::LINQ::Source role with file-based data sources:
+          FromLines, FromCSV, FromTSV, FromLTSV, FromJSON
+        - Added Moo::LINQ::Source::SQLite with FromSQLite
+        - CSV and TSV readers stream one row at a time and support
+          RFC-4180-style quoted fields, custom delimiters, and
+          optional header detection
+        - LTSV reader yields labeled TSV records as hashrefs
+        - JSON reader streams elements of a top-level JSON array
+        - SQLite reader streams query results as hashrefs; requires
+          DBI and DBD::SQLite (loaded on demand, marked as an
+          optional 'sqlite' feature in META)
+        - All file sources except FromJSON are fully lazy — a query
+          over a 1M-row CSV only reads what it needs
+        - Added t/12-source-text.t, t/13-source-structured.t,
+          t/14-source-sqlite.t
+        - Added bench/laziness-sources.pl and bench/laziness-sqlite.pl
+        - README now documents all data sources and shows the same
+          pipeline running over in-memory, CSV, LTSV, and SQLite
 
 0.11    2026-10-09
         - Added Moo::LINQ::Advanced role:
           Chunk, Buffer, Scan, Pairwise, DistinctBy, OrderByCmp,
           Repeat, WhereIndexed, SelectIndexed
-        - Updated POD and README with advanced operator reference
-        - Added t/11-advanced.t covering all new operators
+        - Added full POD for Advanced
         - Total: ~59 operators across 11 roles
 
 0.10    2026-10-08
-        - Full POD documentation for Moo::LINQ and all role modules
+        - Full POD documentation for Moo::LINQ and role modules
         - Markdown README with real-world log-analysis example
         - Laziness benchmark (bench/laziness.pl)
         - Makefile.PL metadata polish (LICENSE, META_MERGE, provides)
@@ -46,8 +62,8 @@ Revision history for Moo::LINQ
         - Added optional third argument to OrderBy / OrderByDescending /
           ThenBy / ThenByDescending: 'auto' | 'numeric' | 'string'
         - Fixed numeric vs. string comparison in sort comparator
-        - Removed Iterator::Simple's iterator wrapper in favor of
-          plain coderefs throughout (avoids undef-vs-value ambiguity)
+        - Replaced Iterator::Simple wrappers with plain coderefs
+          throughout (avoids undef-vs-value ambiguity)
         - Fixed Empty() constructor to return a proper iterator
         - Added tests t/04-aggregation.t, t/05-ordering.t
 

@@ -255,7 +255,7 @@ window-based, stateful, or index-aware transformations. They compose
 freely with all other operators and preserve the library's lazy
 evaluation guarantee, except where noted.
 
-This role is automatically applied to C<Moo::LINQ> — you do not need to
+This role is automatically applied to C<Moo::LINQ> -- you do not need to
 load it directly.
 
 =head1 OPERATORS
@@ -344,7 +344,7 @@ C<$a> and C<$b>, because Perl does not propagate the sort globals into
 subs called from within a sort block.
 
 The comparator must return a negative number, zero, or a positive
-number — the same contract as Perl's built-in C<sort>.
+number -- the same contract as Perl's built-in C<sort>.
 
 Materializing: the entire sequence is buffered to sort it.
 
@@ -405,9 +405,9 @@ Eight of the nine operators are fully lazy. The two exceptions are:
 
 =over 4
 
-=item * C<OrderByCmp> — must buffer the entire sequence to sort it.
+=item * C<OrderByCmp> -- must buffer the entire sequence to sort it.
 
-=item * C<Repeat> — buffers the source once so it can be iterated
+=item * C<Repeat> -- buffers the source once so it can be iterated
 multiple times.
 
 =back
@@ -419,15 +419,15 @@ iterator is eager.
 
 =over 4
 
-=item * L<Moo::LINQ> — the main class and operator reference
+=item * L<Moo::LINQ> -- the main class and operator reference
 
-=item * L<Moo::LINQ::Filtering> — C<Where>, C<Take>, C<Skip>, C<Distinct>
+=item * L<Moo::LINQ::Filtering> -- C<Where>, C<Take>, C<Skip>, C<Distinct>
 
-=item * L<Moo::LINQ::Projection> — C<Select>, C<SelectMany>, C<Cast>
+=item * L<Moo::LINQ::Projection> -- C<Select>, C<SelectMany>, C<Cast>
 
-=item * L<Moo::LINQ::Aggregation> — C<Aggregate>, C<Sum>, C<Average>
+=item * L<Moo::LINQ::Aggregation> -- C<Aggregate>, C<Sum>, C<Average>
 
-=item * L<Moo::LINQ::Ordering> — C<OrderBy>, C<ThenBy>
+=item * L<Moo::LINQ::Ordering> -- C<OrderBy>, C<ThenBy>
 
 =back
 

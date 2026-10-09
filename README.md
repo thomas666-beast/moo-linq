@@ -1,379 +1,175 @@
-# Moo::LINQ
+# NAME
 
-A lazy, chainable LINQ-style query library for Perl.
+Moo::LINQ - A lazy, chainable LINQ-style query library for Perl
 
-[![Perl](https://img.shields.io/badge/perl-5.16%2B-blue.svg)](https://www.perl.org/)
-[![License](https://img.shields.io/badge/license-Perl%205-green.svg)](#license)
-[![Tests](https://img.shields.io/badge/tests-100%2B%20passing-brightgreen.svg)](#)
+# SYNOPSIS
 
----
+    use Moo::LINQ;
 
-## Why?
+    # Simple pipeline
+    my @evens = Moo::LINQ->Range(1, 100)
+        ->Where(sub { $_ % 2 == 0 })
+        ->Select(sub { $_ * 10 })
+        ->Take(5)
+        ->ToArray();
+    # => (20, 40, 60, 80, 100)
 
-`Moo::LINQ` brings the expressive power of C#'s LINQ to Perl:
+    # Group, aggregate, sort -- all lazily
+    my @people = (
+        { name => 'Alice', dept => 'Eng',   salary => 120 },
+        { name => 'Bob',   dept => 'Sales', salary => 90  },
+        { name => 'Carol', dept => 'Eng',   salary => 130 },
+    );
 
-- **Data-source agnostic** — works with arrays, generators, filehandles, hashes, or any iterator.
-- **Fully lazy** — no work happens until you ask for a result.
-- **Role-based** — each operator family is a separate `Moo::Role`.
-- **~55 operators** across filtering, projection, aggregation, ordering, grouping, joining, sets, quantifiers, and conversion.
+    my @summary = Moo::LINQ->From(\@people)
+        ->GroupBy(sub { $_->{dept} })
+        ->Select(sub {
+            my $g = shift;
+            [ $g->key, $g->AsQuery->Average(sub { $_->{salary} }) ]
+        })
+        ->OrderByDescending(sub { $_->[1] })
+        ->ToArray();
 
----
+# DESCRIPTION
 
-## Installation
+`Moo::LINQ` brings C#-style Language Integrated Query to Perl. It provides
+a fluent, chainable API over any iterable data source, with full lazy
+evaluation powered by [Iterator::Simple](https://metacpan.org/pod/Iterator%3A%3ASimple).
 
-From CPAN:
+Unlike data-source-specific modules (`CSV::LINQ`, `LTSV::LINQ`), it works
+with arrays, generators, filehandles, hashes, or any object conforming to
+the iterator protocol. Unlike eager alternatives, no work happens until a
+terminal operator is invoked.
 
-```bash
-cpanm Moo::LINQ
-```
+# QUICK REFERENCE
 
-For development:
+## Sources
 
-```bash
-carton install
-carton exec -- prove -lv t/
-```
+    Moo::LINQ->From($arrayref | $coderef | $glob | $hashref | $iterable)
+    Moo::LINQ->Range($start, $end, $step = 1)
+    Moo::LINQ->Empty()
 
----
+## Filtering
 
-## Quick Start
+    ->Where($pred)          ->WhereNot($pred)      ->First($pred?)
+    ->FirstOrDefault($d, $p?)                       ->Any($pred?)
+    ->All($pred)            ->Take($n)             ->Skip($n)
+    ->TakeWhile($pred)      ->SkipWhile($pred)     ->Distinct()
 
-```perl
-use Moo::LINQ;
+## Projection
 
-my @result = Moo::LINQ->Range(1, 100)
-    ->Where(sub { $_ % 2 == 0 })
-    ->Select(sub { $_ * 10 })
-    ->Take(5)
-    ->ToArray();
+    ->Select($mapper)       ->SelectMany($mapper)  ->Cast($type)
 
-# => (20, 40, 60, 80, 100)
-```
+## Aggregation
 
----
+    ->Count($pred?)         ->Sum($sel?)           ->Average($sel?)
+    ->Min($sel?)            ->Max($sel?)           ->Aggregate($seed, $fn)
 
-## Real-World Example: Log Analysis
+## Ordering
 
-Suppose you have an Apache-style log and want to find the top IPs by
-request count, plus their average response size.
-
-```perl
-use Moo::LINQ;
-
-my @log = (
-    { ip => '10.0.0.1', path => '/',      bytes => 1200, status => 200 },
-    { ip => '10.0.0.2', path => '/about', bytes => 2400, status => 200 },
-    { ip => '10.0.0.1', path => '/docs',  bytes => 800,  status => 200 },
-    { ip => '10.0.0.3', path => '/',      bytes => 500,  status => 404 },
-    { ip => '10.0.0.1', path => '/blog',  bytes => 3200, status => 200 },
-    { ip => '10.0.0.2', path => '/blog',  bytes => 4100, status => 200 },
-);
-
-my @top_ips = Moo::LINQ->From(\@log)
-    ->Where(sub { $_->{status} == 200 })          # keep successful requests
-    ->GroupBy(sub { $_->{ip} })                    # group by IP
-    ->Select(sub {
-        my $g = shift;
-        {
-            ip        => $g->key,
-            requests  => $g->Count,
-            avg_bytes => $g->AsQuery->Average(sub { $_->{bytes} }),
-        }
-    })
-    ->OrderByDescending(sub { $_->{requests} })
-    ->ThenBy(sub { $_->{ip} })
-    ->Take(5)
-    ->ToArray();
-
-for my $row (@top_ips) {
-    printf "%-12s requests=%d avg_bytes=%.0f\n",
-        $row->{ip}, $row->{requests}, $row->{avg_bytes};
-}
-```
-
-Output:
-
-```
-10.0.0.1     requests=2 avg_bytes=2000
-10.0.0.2     requests=2 avg_bytes=3250
-```
-
----
-
-## Laziness in Action
-
-Because `Where`, `Select`, and `GroupBy` are all lazy, this never reads
-more than it needs:
-
-```perl
-my $first_big = Moo::LINQ->Range(1, 10_000_000)
-    ->Where(sub { $_ % 7 == 0 })
-    ->First();    # only scans 7 items from the source
-```
-
-Compare to eager `map`/`grep` pipelines, which would materialize
-10 million elements first.
-
-A quick benchmark (`bench/laziness.pl`) shows the difference on 1M
-elements when only the first match is needed:
-
-```bash
-carton exec -- perl bench/laziness.pl
-```
-
-```
-                 Rate  eager (map+grep)  Moo::LINQ (lazy)
-eager (map+grep) 1.20/s                --              -99%
-Moo::LINQ (lazy) 120/s             9900%                --
-```
-
----
-
-## Operator Reference
-
-See `perldoc Moo::LINQ` for the full list.
-
-### Sources
-
-| Operator | Description |
-|----------|-------------|
-| `From($src)` | Create a query from an arrayref, coderef, GLOB, hashref, or any iterable |
-| `Range($start, $end, $step)` | Lazy numeric range |
-| `Empty()` | Empty query |
-
-### Filtering
-
-| Operator | Description |
-|----------|-------------|
-| `Where($pred)` | Keep items matching predicate |
-| `WhereNot($pred)` | Keep items not matching predicate |
-| `First($pred?)` | First item (optionally matching) |
-| `FirstOrDefault($d, $p?)` | First item or default |
-| `Any($pred?)` | True if any match |
-| `All($pred)` | True if all match |
-| `Take($n)` | First N items |
-| `Skip($n)` | Skip first N items |
-| `TakeWhile($pred)` | Take while predicate holds |
-| `SkipWhile($pred)` | Skip while predicate holds |
-| `Distinct()` | Deduplicate |
-
-### Projection
-
-| Operator | Description |
-|----------|-------------|
-| `Select($fn)` | Transform each item |
-| `SelectMany($fn)` | Flat-map |
-| `Cast($type)` | Coerce type (`int`, `num`, `string`, `uc`, `lc`) |
-
-### Aggregation
-
-| Operator | Description |
-|----------|-------------|
-| `Count($pred?)` | Count items |
-| `Sum($sel?)` | Sum values |
-| `Average($sel?)` | Average values |
-| `Min($sel?)` / `Max($sel?)` | Minimum / maximum |
-| `Aggregate($seed, $fn)` | Fold with seed |
-
-### Ordering
-
-| Operator | Description |
-|----------|-------------|
-| `OrderBy($key, $type?)` | Ascending sort |
-| `OrderByDescending($key, $type?)` | Descending sort |
-| `ThenBy($key, $type?)` | Secondary ascending sort |
-| `ThenByDescending($key, $type?)` | Secondary descending sort |
-| `Reverse()` | Reverse the sequence |
+    ->OrderBy($key, $type?)           ->OrderByDescending($key, $type?)
+    ->ThenBy($key, $type?)            ->ThenByDescending($key, $type?)
+    ->Reverse()
 
 `$type` is `'auto'` (default), `'numeric'`, or `'string'`.
 
-### Grouping
+## Grouping
 
-| Operator | Description |
-|----------|-------------|
-| `GroupBy($key_fn, $elem_fn?)` | Group items by key |
-| `ToLookup($key_fn, $elem_fn?)` | Group into a hashref |
+    ->GroupBy($key_fn, $elem_fn?)     ->ToLookup($key_fn, $elem_fn?)
 
-### Joining
+## Joining
 
-| Operator | Description |
-|----------|-------------|
-| `Join($inner, $ok, $ik, $fn)` | Inner join |
-| `GroupJoin($inner, $ok, $ik, $fn)` | Group join |
-| `Zip($other, $fn)` | Zip two sequences |
+    ->Join($inner, $outer_key, $inner_key, $result_fn)
+    ->GroupJoin($inner, $outer_key, $inner_key, $result_fn)
+    ->Zip($other, $result_fn)
 
-### Sets
+## Sets
 
-| Operator | Description |
-|----------|-------------|
-| `Concat($other)` | Concatenate sequences |
-| `Union($other)` | Union (distinct) |
-| `Intersect($other)` | Intersection |
-| `Except($other)` | Difference |
+    ->Concat($other)   ->Union($other)
+    ->Intersect($other)->Except($other)
 
-### Quantifiers
+## Quantifiers
 
-| Operator | Description |
-|----------|-------------|
-| `Contains($v)` | Is `$v` present? |
-| `SequenceEqual($other)` | Element-wise equality |
-| `ElementAt($n)` | Item at index (dies if out of range) |
-| `ElementAtOrDefault($n, $d)` | Item at index or default |
-| `Single($pred?)` | Exactly one item |
-| `SingleOrDefault($d, $p?)` | One item or default |
-| `Last($pred?)` / `LastOrDefault($d, $p?)` | Last item |
-| `DefaultIfEmpty($d?)` | Default if empty |
+    ->Contains($v)          ->SequenceEqual($other)
+    ->ElementAt($n)         ->ElementAtOrDefault($n, $default)
+    ->Single($pred?)        ->SingleOrDefault($default, $pred?)
+    ->Last($pred?)          ->LastOrDefault($default, $pred?)
+    ->DefaultIfEmpty($d?)
 
-### Conversion
+## Conversion
 
-| Operator | Description |
-|----------|-------------|
-| `ToArray()` | List of items |
-| `ToList()` | Arrayref of items |
-| `ToHash($key, $val?)` | Hashref keyed by selector |
-| `ToJson()` | JSON array |
-| `ToString($sep?)` | Join items with separator |
-| `ForEach($fn)` | Side-effect iteration |
-| `Print($sep?)` | Print items |
+    ->ToArray()   ->ToList()   ->ToHash($key, $val?)
+    ->ToJson()    ->ToString($sep?) ->ForEach($fn) ->Print($sep?)
 
-## Advanced Operators
+## Advanced
 
-For specialized transformations, the `Moo::LINQ::Advanced` role adds:
+    ->Chunk($size)                  ->Scan($seed, $fn)
+    ->Pairwise($fn)                 ->DistinctBy($key_fn)
+    ->OrderByCmp($cmp_fn)           ->Repeat($n)
+    ->Buffer($size)                 ->WhereIndexed($pred)
+    ->SelectIndexed($fn)
 
-| Operator | Description |
-|----------|-------------|
-| `Chunk($size)` | Split into arrayrefs of `$size` items |
-| `Buffer($size)` | Alias for `Chunk` — pull-ahead batching |
-| `Scan($seed, $fn)` | Running fold; yields each intermediate accumulator |
-| `Pairwise($fn)` | Apply `$fn(prev, curr)` to adjacent pairs |
-| `DistinctBy($key_fn)` | Deduplicate using a key selector |
-| `OrderByCmp($cmp)` | Custom comparator (uses `$a`/`$b`) |
-| `Repeat($n)` | Repeat the sequence N times |
-| `WhereIndexed($pred)` | Predicate gets `($item, $index)` |
-| `SelectIndexed($fn)` | Mapper gets `($item, $index)` |
+## Sources
 
-Example — sliding windows and running totals:
+    Moo::LINQ->From($arrayref | $coderef | $glob | $hashref | $iterable)
+    Moo::LINQ->Range($start, $end, $step = 1)
+    Moo::LINQ->Empty()
 
-```perl
-# Rolling 3-item averages
-my @rolling = Moo::LINQ->From(\@values)
-    ->Chunk(3)
-    ->Select(sub { my $c = shift; my $sum = 0; $sum += $_ for @$c; $sum / @$c })
-    ->ToArray();
+    # File sources (Moo::LINQ::Source role)
+    Moo::LINQ->FromLines($path, %opts)
+    Moo::LINQ->FromCSV($path, %opts)
+    Moo::LINQ->FromTSV($path, %opts)
+    Moo::LINQ->FromLTSV($path, %opts)
+    Moo::LINQ->FromJSON($path, %opts)
 
-# Cumulative sum
-my @cumsum = Moo::LINQ->From(\@values)
-    ->Scan(0, sub { $_[0] + $_[1] })
-    ->ToArray();
+    # SQLite (requires DBI + DBD::SQLite)
+    Moo::LINQ->FromSQLite($path, $sql, \@params?)
 
-# Day-over-day deltas
-my @deltas = Moo::LINQ->From(\@daily)
-    ->Pairwise(sub { $_[1] - $_[0] })
-    ->ToArray();
-```
+# LAZINESS
 
----
+Every non-terminal operator returns a new `Moo::LINQ` object wrapping a
+composed iterator. Nothing executes until you call a terminal operator
+(`ToArray`, `First`, `Sum`, `ForEach`, `Print`, etc.).
 
-## Architecture
+    my $query = Moo::LINQ->Range(1, 1_000_000)
+        ->Where(sub { $_ % 2 == 0 })
+        ->Select(sub { $_ * $_ });
+    # No work has happened yet.
 
-`Moo::LINQ` is composed of `Moo::Role` modules that can be loaded
-independently:
+    my $first = $query->First();   # Only 1 item produced from the range.
 
-```
-Moo::LINQ
-├── Moo::LINQ::Filtering
-├── Moo::LINQ::Projection
-├── Moo::LINQ::Aggregation
-├── Moo::LINQ::Ordering
-├── Moo::LINQ::Grouping
-├── Moo::LINQ::Joining
-├── Moo::LINQ::Sets
-├── Moo::LINQ::Quantifiers
-└── Moo::LINQ::Conversion
-```
+# ROLES
 
-Each non-terminal operator returns a **new `Moo::LINQ` object** wrapping
-a composed iterator. This is what enables both laziness and arbitrary
-chaining.
+The library is composed of role modules that can be loaded independently:
 
----
+    Moo::LINQ::Filtering
+    Moo::LINQ::Projection
+    Moo::LINQ::Aggregation
+    Moo::LINQ::Ordering
+    Moo::LINQ::Grouping
+    Moo::LINQ::Joining
+    Moo::LINQ::Sets
+    Moo::LINQ::Quantifiers
+    Moo::LINQ::Conversion
+    Moo::LINQ::Advanced
+    Moo::LINQ::Source
+    Moo::LINQ::Source::Lines
+    Moo::LINQ::Source::CSV
+    Moo::LINQ::Source::TSV
+    Moo::LINQ::Source::LTSV
+    Moo::LINQ::Source::JSON
+    Moo::LINQ::Source::SQLite
 
-## Development
+# SEE ALSO
 
-### Project layout
+- [Iterator::Simple](https://metacpan.org/pod/Iterator%3A%3ASimple) - the laziness engine
+- [Moo](https://metacpan.org/pod/Moo) - the OO foundation
+- [CSV::LINQ](https://metacpan.org/pod/CSV%3A%3ALINQ), [LTSV::LINQ](https://metacpan.org/pod/LTSV%3A%3ALINQ) - data-source-specific alternatives
 
-```
-Moo-LINQ/
-├── cpanfile
-├── cpanfile.snapshot
-├── Makefile.PL
-├── README.md
-├── Changes
-├── bench/
-│   └── laziness.pl
-├── lib/
-│   └── Moo/
-│       ├── LINQ.pm
-│       └── LINQ/
-│           ├── Filtering.pm
-│           ├── Projection.pm
-│           ├── Aggregation.pm
-│           ├── Ordering.pm
-│           ├── Grouping.pm
-│           ├── Group.pm
-│           ├── Joining.pm
-│           ├── Sets.pm
-│           ├── Quantifiers.pm
-│           └── Conversion.pm
-└── t/
-    ├── 01-basic.t
-    ├── 02-filtering.t
-    ├── 03-projection.t
-    ├── 04-aggregation.t
-    ├── 05-ordering.t
-    ├── 06-grouping.t
-    ├── 07-joining.t
-    ├── 08-sets.t
-    ├── 09-quantifiers.t
-    └── 10-conversion.t
-```
-
-### Running tests
-
-```bash
-carton install
-carton exec -- prove -lv t/
-```
-
-### Benchmarks
-
-```bash
-carton exec -- perl bench/laziness.pl
-```
-
----
-
-## Comparison
-
-| Feature | `Moo::LINQ` | `CSV::LINQ` | `LTSV::LINQ` | `List::Linq` |
-|---------|:-----------:|:-----------:|:------------:|:------------:|
-| Data-source agnostic | ✅ | ❌ CSV only | ❌ LTSV only | ✅ |
-| Fully lazy | ✅ | ⚠️ partial | ⚠️ partial | ⚠️ partial |
-| Chainable | ✅ | ✅ | ✅ | ✅ |
-| Role-based composition | ✅ | ❌ | ❌ | ❌ |
-| Grouping / Joining | ✅ | ✅ | ✅ | ✅ |
-| Sets / Quantifiers | ✅ | ❌ | ❌ | ⚠️ |
-| Conversion (`ToJson`, `ToHash`) | ✅ | ❌ | ❌ | ❌ |
-| Built on `Moo` | ✅ | ❌ | ❌ | ❌ |
-
----
-
-## License
-
-Same as Perl 5.
-
----
-
-## Author
+# AUTHOR
 
 Thomas
+
+# LICENSE
+
+Same as Perl 5.

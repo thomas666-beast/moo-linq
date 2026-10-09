@@ -56,3 +56,19 @@ sub ToLookup {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Moo::LINQ::Grouping - Grouping operators for Moo::LINQ
+
+=head1 DESCRIPTION
+
+Provides C<GroupBy> and C<ToLookup>. Loaded automatically by L<Moo::LINQ>.
+
+=head1 SEE ALSO
+
+L<Moo::LINQ>, L<Moo::LINQ::Group>
+
+=cut

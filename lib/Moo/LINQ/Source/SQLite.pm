@@ -94,25 +94,25 @@ Moo::LINQ::Source::SQLite - SQLite query source for Moo::LINQ
 =head1 DESCRIPTION
 
 Streams rows from a SQLite query as hashrefs. The statement handle is
-executed lazily on first use and iterated one row at a time — the full
+executed lazily on first use and iterated one row at a time -- the full
 result set is never buffered.
 
 =head1 OPTIONS
 
 =over 4
 
-=item * C<path> (required) — path to the SQLite database file
+=item * C<path> (required) -- path to the SQLite database file
 
-=item * C<query> (required) — SQL SELECT statement
+=item * C<query> (required) -- SQL SELECT statement
 
-=item * C<params> (optional) — arrayref of bind values, default C<[]>
+=item * C<params> (optional) -- arrayref of bind values, default C<[]>
 
 =back
 
 =head1 REQUIREMENTS
 
 Requires L<DBI> and L<DBD::SQLite>. These are only loaded when
-C<FromSQLite> is actually called — libraries that use Moo::LINQ without
+C<FromSQLite> is actually called -- libraries that use Moo::LINQ without
 SQLite support do not need them installed.
 
 =head1 RESOURCE CLEANUP

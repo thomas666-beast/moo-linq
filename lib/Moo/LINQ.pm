@@ -108,7 +108,7 @@ Moo::LINQ - A lazy, chainable LINQ-style query library for Perl
         ->ToArray();
     # => (20, 40, 60, 80, 100)
 
-    # Group, aggregate, sort — all lazily
+    # Group, aggregate, sort -- all lazily
     my @people = (
         { name => 'Alice', dept => 'Eng',   salary => 120 },
         { name => 'Bob',   dept => 'Sales', salary => 90  },
@@ -216,6 +216,9 @@ C<$type> is C<'auto'> (default), C<'numeric'>, or C<'string'>.
     Moo::LINQ->FromLTSV($path, %opts)
     Moo::LINQ->FromJSON($path, %opts)
 
+    # SQLite (requires DBI + DBD::SQLite)
+    Moo::LINQ->FromSQLite($path, $sql, \@params?)
+
 =head1 LAZINESS
 
 Every non-terminal operator returns a new C<Moo::LINQ> object wrapping a
@@ -243,6 +246,13 @@ The library is composed of role modules that can be loaded independently:
     Moo::LINQ::Quantifiers
     Moo::LINQ::Conversion
     Moo::LINQ::Advanced
+    Moo::LINQ::Source
+    Moo::LINQ::Source::Lines
+    Moo::LINQ::Source::CSV
+    Moo::LINQ::Source::TSV
+    Moo::LINQ::Source::LTSV
+    Moo::LINQ::Source::JSON
+    Moo::LINQ::Source::SQLite
 
 =head1 SEE ALSO
 
