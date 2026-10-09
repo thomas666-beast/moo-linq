@@ -13,6 +13,77 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  DBD-SQLite-1.78
+    pathname: I/IS/ISHIGAKI/DBD-SQLite-1.78.tar.gz
+    provides:
+      DBD::SQLite 1.78
+      DBD::SQLite::Constants undef
+      DBD::SQLite::GetInfo undef
+      DBD::SQLite::VirtualTable 1.78
+      DBD::SQLite::VirtualTable::Cursor 1.78
+      DBD::SQLite::VirtualTable::FileContent undef
+      DBD::SQLite::VirtualTable::FileContent::Cursor undef
+      DBD::SQLite::VirtualTable::PerlData undef
+      DBD::SQLite::VirtualTable::PerlData::Cursor undef
+    requirements:
+      DBI 1.57
+      ExtUtils::MakeMaker 0
+      File::Spec 0.82
+      Test::More 0.88
+      Tie::Hash 0
+      perl 5.006
+  DBI-1.655
+    pathname: H/HM/HMBRAND/DBI-1.655.tgz
+    provides:
+      Bundle::DBI 12.008696
+      DBD::DBM 0.08
+      DBD::ExampleP 12.014311
+      DBD::File 0.45
+      DBD::Gofer 0.015327
+      DBD::Gofer::Policy::Base 0.010088
+      DBD::Gofer::Policy::classic 0.010088
+      DBD::Gofer::Policy::pedantic 0.010088
+      DBD::Gofer::Policy::rush 0.010088
+      DBD::Gofer::Transport::Base 0.014121
+      DBD::Gofer::Transport::corostream 2.165300
+      DBD::Gofer::Transport::null 0.010088
+      DBD::Gofer::Transport::pipeone 0.010088
+      DBD::Gofer::Transport::stream 0.014599
+      DBD::Mem 0.001
+      DBD::NullP 12.014715
+      DBD::Proxy 0.2004
+      DBD::Sponge 12.010003
+      DBI 1.655
+      DBI::Const::GetInfo::ANSI 2.008697
+      DBI::Const::GetInfo::ODBC 2.011374
+      DBI::Const::GetInfoReturn 2.008697
+      DBI::Const::GetInfoType 2.008697
+      DBI::DBD 12.015129
+      DBI::DBD::Metadata 2.014214
+      DBI::DBD::SqlEngine 0.06
+      DBI::Gofer::Execute 0.014283
+      DBI::Gofer::Request 0.012537
+      DBI::Gofer::Response 0.011566
+      DBI::Gofer::Serializer::Base 0.009950
+      DBI::Gofer::Serializer::DataDumper 0.009950
+      DBI::Gofer::Serializer::Storable 0.015586
+      DBI::Gofer::Transport::Base 0.012537
+      DBI::Gofer::Transport::pipeone 0.012537
+      DBI::Gofer::Transport::stream 0.012537
+      DBI::Profile 2.015065
+      DBI::ProfileData 2.010008
+      DBI::ProfileDumper 2.015325
+      DBI::ProfileDumper::Apache 2.014121
+      DBI::ProfileSubs 0.009396
+      DBI::ProxyServer 0.3005
+      DBI::PurePerl 2.014286
+      DBI::SQL::Nano 1.015544
+      DBI::Util::CacheMemory 0.010315
+    requirements:
+      ExtUtils::MakeMaker 6.48
+      Module::Load 0.22
+      Test::Simple 0.96
+      perl 5.012000
   Iterator-Simple-0.07
     pathname: M/MI/MICHAEL/Iterator-Simple-0.07.tar.gz
     provides:

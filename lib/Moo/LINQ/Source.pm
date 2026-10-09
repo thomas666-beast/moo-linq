@@ -11,6 +11,7 @@ use Moo::LINQ::Source::CSV;
 use Moo::LINQ::Source::TSV;
 use Moo::LINQ::Source::LTSV;
 use Moo::LINQ::Source::JSON;
+use Moo::LINQ::Source::SQLite;
 
 sub FromLines {
     my ($class, $path, %opts) = @_;
@@ -39,6 +40,16 @@ sub FromLTSV {
 sub FromJSON {
     my ($class, $path, %opts) = @_;
     my $src = Moo::LINQ::Source::JSON->new(path => $path, %opts);
+    return $class->new(_iterator => $src->iterator);
+}
+
+sub FromSQLite {
+    my ($class, $path, $query, $params) = @_;
+    my $src = Moo::LINQ::Source::SQLite->new(
+        path   => $path,
+        query  => $query,
+        params => $params || [],
+    );
     return $class->new(_iterator => $src->iterator);
 }
 

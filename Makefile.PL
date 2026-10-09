@@ -18,8 +18,10 @@ WriteMakefile(
     },
 
     TEST_REQUIRES => {
-        'Test::More' => '1.300',
-        'File::Temp' => '0.22',
+        'Test::More'   => '1.300',
+        'File::Temp'   => '0.22',
+        'DBI'          => '1.600',
+        'DBD::SQLite'  => '1.60',
     },
 
     META_MERGE => {
@@ -81,6 +83,11 @@ WriteMakefile(
             'Moo::LINQ::Source::Lines'=> { file => 'lib/Moo/LINQ/Source/Lines.pm', version => '0.01' },
             'Moo::LINQ::Source::LTSV' => { file => 'lib/Moo/LINQ/Source/LTSV.pm', version => '0.01' },
             'Moo::LINQ::Source::JSON' => { file => 'lib/Moo/LINQ/Source/JSON.pm', version => '0.01' },
+
+            'Moo::LINQ::Source::SQLite' => {
+                file    => 'lib/Moo/LINQ/Source/SQLite.pm',
+                version => '0.01',
+            },
         },
 
         resources => {
