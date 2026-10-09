@@ -236,6 +236,42 @@ See `perldoc Moo::LINQ` for the full list.
 | `ForEach($fn)` | Side-effect iteration |
 | `Print($sep?)` | Print items |
 
+## Advanced Operators
+
+For specialized transformations, the `Moo::LINQ::Advanced` role adds:
+
+| Operator | Description |
+|----------|-------------|
+| `Chunk($size)` | Split into arrayrefs of `$size` items |
+| `Buffer($size)` | Alias for `Chunk` — pull-ahead batching |
+| `Scan($seed, $fn)` | Running fold; yields each intermediate accumulator |
+| `Pairwise($fn)` | Apply `$fn(prev, curr)` to adjacent pairs |
+| `DistinctBy($key_fn)` | Deduplicate using a key selector |
+| `OrderByCmp($cmp)` | Custom comparator (uses `$a`/`$b`) |
+| `Repeat($n)` | Repeat the sequence N times |
+| `WhereIndexed($pred)` | Predicate gets `($item, $index)` |
+| `SelectIndexed($fn)` | Mapper gets `($item, $index)` |
+
+Example — sliding windows and running totals:
+
+```perl
+# Rolling 3-item averages
+my @rolling = Moo::LINQ->From(\@values)
+    ->Chunk(3)
+    ->Select(sub { my $c = shift; my $sum = 0; $sum += $_ for @$c; $sum / @$c })
+    ->ToArray();
+
+# Cumulative sum
+my @cumsum = Moo::LINQ->From(\@values)
+    ->Scan(0, sub { $_[0] + $_[1] })
+    ->ToArray();
+
+# Day-over-day deltas
+my @deltas = Moo::LINQ->From(\@daily)
+    ->Pairwise(sub { $_[1] - $_[0] })
+    ->ToArray();
+```
+
 ---
 
 ## Architecture

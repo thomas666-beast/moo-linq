@@ -1,0 +1,73 @@
+Revision history for Moo::LINQ
+
+0.11    2026-10-09
+        - Added Moo::LINQ::Advanced role:
+          Chunk, Buffer, Scan, Pairwise, DistinctBy, OrderByCmp,
+          Repeat, WhereIndexed, SelectIndexed
+        - Updated POD and README with advanced operator reference
+        - Added t/11-advanced.t covering all new operators
+        - Total: ~59 operators across 11 roles
+
+0.10    2026-10-08
+        - Full POD documentation for Moo::LINQ and all role modules
+        - Markdown README with real-world log-analysis example
+        - Laziness benchmark (bench/laziness.pl)
+        - Makefile.PL metadata polish (LICENSE, META_MERGE, provides)
+        - Added Changes file
+        - Verified clean with podchecker
+
+0.07    2026-10-08
+        - Added Moo::LINQ::Quantifiers role:
+          Contains, SequenceEqual, ElementAt, ElementAtOrDefault,
+          Single, SingleOrDefault, Last, LastOrDefault, DefaultIfEmpty
+        - Added Moo::LINQ::Conversion role:
+          ToHash, ToJson, ToString, ForEach, Print
+        - Added tests t/09-quantifiers.t, t/10-conversion.t
+
+0.06    2026-10-08
+        - Fixed Moo::LINQ::Group loading: use Moo::LINQ::Group
+          in Grouping.pm and Moo::LINQ.pm
+        - Added t/06-grouping.t
+
+0.05    2026-10-08
+        - Added Moo::LINQ::Grouping role: GroupBy, ToLookup
+        - Added Moo::LINQ::Joining role: Join, GroupJoin, Zip
+        - Added Moo::LINQ::Sets role:
+          Concat, Union, Intersect, Except
+        - Added Moo::LINQ::Group class
+        - Added tests t/06-grouping.t, t/07-joining.t, t/08-sets.t
+
+0.04    2026-10-08
+        - Added optional third argument to OrderBy / OrderByDescending /
+          ThenBy / ThenByDescending: 'auto' | 'numeric' | 'string'
+        - Fixed numeric vs. string comparison in sort comparator
+        - Removed Iterator::Simple's iterator wrapper in favor of
+          plain coderefs throughout (avoids undef-vs-value ambiguity)
+        - Fixed Empty() constructor to return a proper iterator
+        - Added tests t/04-aggregation.t, t/05-ordering.t
+
+0.03    2026-10-08
+        - Added Moo::LINQ::Aggregation role:
+          Count, Sum, Average, Min, Max, Aggregate
+        - Added Moo::LINQ::Ordering role:
+          OrderBy, OrderByDescending, ThenBy, ThenByDescending, Reverse
+        - Introduced _sort_spec attribute for ThenBy chaining
+        - Made all internal iterators plain coderefs for consistency
+
+0.02    2026-10-08
+        - Added Moo::LINQ::Filtering role:
+          Where, WhereNot, First, FirstOrDefault, Any, All,
+          Take, Skip, TakeWhile, SkipWhile, Distinct
+        - Added Moo::LINQ::Projection role:
+          Select, SelectMany, Cast
+        - Fixed $_ localization in predicates and mappers
+        - Fixed SelectMany scalar-context bug: captures mapper output
+          in list context, handles arrayref flattening correctly
+        - Added tests t/02-filtering.t, t/03-projection.t
+
+0.01    2026-10-08
+        - Initial skeleton
+        - Core class Moo::LINQ with From, Range, Empty
+        - Terminal operators ToArray, ToList
+        - Carton setup (cpanfile, cpanfile.snapshot)
+        - Basic tests t/01-basic.t

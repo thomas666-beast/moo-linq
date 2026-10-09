@@ -13,9 +13,10 @@ with 'Moo::LINQ::Filtering',
      'Moo::LINQ::Joining',
      'Moo::LINQ::Sets',
      'Moo::LINQ::Quantifiers',
-     'Moo::LINQ::Conversion';
+     'Moo::LINQ::Conversion',
+     'Moo::LINQ::Advanced';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 has _iterator => (
     is       => 'ro',
@@ -193,6 +194,14 @@ C<$type> is C<'auto'> (default), C<'numeric'>, or C<'string'>.
     ->ToArray()   ->ToList()   ->ToHash($key, $val?)
     ->ToJson()    ->ToString($sep?) ->ForEach($fn) ->Print($sep?)
 
+=head2 Advanced
+
+    ->Chunk($size)                  ->Scan($seed, $fn)
+    ->Pairwise($fn)                 ->DistinctBy($key_fn)
+    ->OrderByCmp($cmp_fn)           ->Repeat($n)
+    ->Buffer($size)                 ->WhereIndexed($pred)
+    ->SelectIndexed($fn)
+
 =head1 LAZINESS
 
 Every non-terminal operator returns a new C<Moo::LINQ> object wrapping a
@@ -219,6 +228,7 @@ The library is composed of role modules that can be loaded independently:
     Moo::LINQ::Sets
     Moo::LINQ::Quantifiers
     Moo::LINQ::Conversion
+    Moo::LINQ::Advanced
 
 =head1 SEE ALSO
 
